@@ -9,25 +9,29 @@ import java.math.BigDecimal;
 
 @Entity
 @Table(name = "ecommerce_transaction")
-public class ECommerceTransactionEntity extends BaseEntity{
+public class ECommerceTransactionEntity extends BaseEntity {
 
     private static final long serialVersionUID = -8608171571045466763L;
+
+    @Column(name = "transaction_uid")
+    private String transactionUID;
 
     @Column(name = "transaction_type")
     @Enumerated(EnumType.STRING)
     private TransactionType transactionType;
 
+    @Column(name = "device_type")
+    @Enumerated(EnumType.STRING)
+    private DeviceType deviceType;
+
     @Column(name = "merchant_id")
-    private String merchantId;
+    private Long merchantId;
 
     @Column(name = "amount")
     private BigDecimal amount;
 
     @Column(name = "quantity")
-    private Long quantity;
-
-    @Column(name = "line_item_count")
-    private int lineItemCount;
+    private int quantity;
 
     @Column(name = "currency")
     @Enumerated(EnumType.STRING)
@@ -46,12 +50,13 @@ public class ECommerceTransactionEntity extends BaseEntity{
     @Column(name = "auth_ref_no")
     private String authTransRefNo;
 
-    public String getMerchantId() {
-        return merchantId;
+
+    public String getTransactionUID() {
+        return transactionUID;
     }
 
-    public void setMerchantId(String merchantId) {
-        this.merchantId = merchantId;
+    public void setTransactionUID(String transactionUID) {
+        this.transactionUID = transactionUID;
     }
 
     public TransactionType getTransactionType() {
@@ -62,6 +67,22 @@ public class ECommerceTransactionEntity extends BaseEntity{
         this.transactionType = transactionType;
     }
 
+    public DeviceType getDeviceType() {
+        return deviceType;
+    }
+
+    public void setDeviceType(DeviceType deviceType) {
+        this.deviceType = deviceType;
+    }
+
+    public Long getMerchantId() {
+        return merchantId;
+    }
+
+    public void setMerchantId(Long merchantId) {
+        this.merchantId = merchantId;
+    }
+
     public BigDecimal getAmount() {
         return amount;
     }
@@ -70,20 +91,13 @@ public class ECommerceTransactionEntity extends BaseEntity{
         this.amount = amount;
     }
 
-    public Long getQuantity() {
+
+    public int getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(Long quantity) {
+    public void setQuantity(int quantity) {
         this.quantity = quantity;
-    }
-
-    public int getLineItemCount() {
-        return lineItemCount;
-    }
-
-    public void setLineItemCount(int lineItemCount) {
-        this.lineItemCount = lineItemCount;
     }
 
     public Currency getCurrencySupported() {

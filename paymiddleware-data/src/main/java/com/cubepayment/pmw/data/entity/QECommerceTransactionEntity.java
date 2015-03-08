@@ -15,9 +15,11 @@ import com.mysema.query.types.Path;
 @Generated("com.mysema.query.codegen.EntitySerializer")
 public class QECommerceTransactionEntity extends EntityPathBase<ECommerceTransactionEntity> {
 
-    private static final long serialVersionUID = -2059012538L;
+    private static final long serialVersionUID = 113843430L;
 
     public static final QECommerceTransactionEntity eCommerceTransactionEntity = new QECommerceTransactionEntity("eCommerceTransactionEntity");
+
+    public final QBaseEntity _super = new QBaseEntity(this);
 
     public final NumberPath<java.math.BigDecimal> amount = createNumber("amount", java.math.BigDecimal.class);
 
@@ -27,17 +29,31 @@ public class QECommerceTransactionEntity extends EntityPathBase<ECommerceTransac
 
     public final StringPath authTransRefNo = createString("authTransRefNo");
 
+    //inherited
+    public final DateTimePath<java.util.Date> creationDate = _super.creationDate;
+
     public final EnumPath<Currency> currencySupported = createEnum("currencySupported", Currency.class);
 
-    public final NumberPath<Integer> lineItemCount = createNumber("lineItemCount", Integer.class);
+    public final EnumPath<DeviceType> deviceType = createEnum("deviceType", DeviceType.class);
 
-    public final StringPath merchantId = createString("merchantId");
+    //inherited
+    public final NumberPath<Long> id = _super.id;
 
-    public final NumberPath<Long> quantity = createNumber("quantity", Long.class);
+    //inherited
+    public final DateTimePath<java.util.Date> lastUpdateDate = _super.lastUpdateDate;
+
+    public final NumberPath<Long> merchantId = createNumber("merchantId", Long.class);
+
+    public final NumberPath<Integer> quantity = createNumber("quantity", Integer.class);
 
     public final EnumPath<TransactionStatus> transactionStatus = createEnum("transactionStatus", TransactionStatus.class);
 
     public final EnumPath<TransactionType> transactionType = createEnum("transactionType", TransactionType.class);
+
+    public final StringPath transactionUID = createString("transactionUID");
+
+    //inherited
+    public final NumberPath<Long> version = _super.version;
 
     public QECommerceTransactionEntity(String variable) {
         super(ECommerceTransactionEntity.class, forVariable(variable));

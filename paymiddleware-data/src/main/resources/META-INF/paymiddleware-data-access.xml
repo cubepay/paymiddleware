@@ -13,9 +13,9 @@
        http://www.springframework.org/schema/data/jpa
        http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
 
-    <context:component-scan base-package="com.cubepayment.paymiddleware.data"/>
+    <context:component-scan base-package="com.cubepayment.pmw.data"/>
 
-    <jpa:repositories base-package="com.cubepayment.paymiddleware.data"
+    <jpa:repositories base-package="com.cubepayment.pmw.data"
                       entity-manager-factory-ref="entityManagerFactoryPayMiddleware"/>
 
     <bean id="jpaVendorAdapter"
@@ -36,12 +36,12 @@
         <property name="ignoreUnresolvablePlaceholders" value="true"/>
     </bean>
 
-    <bean id="transactionManagerPayMiddleware" class="org.springframework.orm.jpa.JpaTransactionManager">
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
         <property name="entityManagerFactory" ref="entityManagerFactoryPayMiddleware"/>
         <property name="defaultTimeout" value="${transaction.timeout}"/>
     </bean>
 
-    <tx:annotation-driven transaction-manager="transactionManagerPayMiddleware"/>
+    <tx:annotation-driven transaction-manager="transactionManager"/>
 
     <bean id="entityManagerFactoryPayMiddleware"
           class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
