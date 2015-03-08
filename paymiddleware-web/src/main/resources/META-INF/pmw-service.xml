@@ -10,13 +10,19 @@
                            http://www.springframework.org/schema/context
                            http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <!--Import Mailsy Web Data Access-->
+    <!--Import PMW Web Data Access-->
     <import resource="paymiddleware-data-access.xml"/>
 
-    <context:component-scan base-package="com.cubepayment"/>
+    <context:component-scan base-package="com.cubepayment.pmw"/>
 
-    <util:properties id="applicationProps" location="file:${catalina.home}/conf/paymiddleware/paymiddleware_web.properties"/>
-
-    <context:property-placeholder properties-ref="applicationProps"/>
+    <bean id="applicationProps"
+          class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+        <property name="locations">
+            <list>
+                <value>file:${catalina.home}/conf/paymiddleware/paymiddleware_web.properties</value>
+            </list>
+        </property>
+        <property name="ignoreResourceNotFound" value="true"/>
+    </bean>
 
 </beans>
