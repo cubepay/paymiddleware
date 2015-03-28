@@ -16,17 +16,16 @@ import java.util.Date;
 public abstract class BaseEntity implements Serializable{
 
     private static final long serialVersionUID = -7737865230613072731L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", length = 11)
     private Long id;
 
-    @Column(name = "creation_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate;
 
 
-    @Column(name = "last_updated_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastUpdateDate;
 

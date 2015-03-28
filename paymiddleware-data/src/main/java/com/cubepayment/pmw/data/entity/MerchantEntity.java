@@ -2,7 +2,6 @@ package com.cubepayment.pmw.data.entity;
 
 
 import javax.persistence.Entity;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -13,8 +12,10 @@ public class MerchantEntity extends BaseEntity {
 
     private String merchantName;
 
+    private String merchantResponseURL;
+
     @OneToOne
-    private MerchantConfigurationEntity merchantConfigurationEntity;
+    private CybersourceConfigurationEntity cybersourceConfigurationEntity;
 
     public String getMerchantName() {
         return merchantName;
@@ -24,11 +25,19 @@ public class MerchantEntity extends BaseEntity {
         this.merchantName = merchantName;
     }
 
-    public MerchantConfigurationEntity getMerchantConfigurationEntity() {
-        return merchantConfigurationEntity;
+    public CybersourceConfigurationEntity getCybersourceConfigurationEntity() {
+        return cybersourceConfigurationEntity;
     }
 
-    public void setMerchantConfigurationEntity(MerchantConfigurationEntity merchantConfigurationEntity) {
-        this.merchantConfigurationEntity = merchantConfigurationEntity;
+    public void setCybersourceConfigurationEntity(CybersourceConfigurationEntity cybersourceConfigurationEntity) {
+        this.cybersourceConfigurationEntity = cybersourceConfigurationEntity;
+    }
+
+    public String getMerchantResponseURL() {
+        return merchantResponseURL;
+    }
+
+    public void setMerchantResponseURL(String merchantResponseURL) {
+        this.merchantResponseURL = merchantResponseURL;
     }
 }
