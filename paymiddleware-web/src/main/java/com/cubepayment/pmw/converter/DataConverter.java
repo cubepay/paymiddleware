@@ -1,11 +1,11 @@
 package com.cubepayment.pmw.converter;
 
 import com.cubepayment.pmw.data.entity.BaseEntity;
+import com.cubepayment.pmw.data.entity.CybersourceTransactionLogEntity;
 import com.cubepayment.pmw.dto.PaymiddlewareDTO;
 
 public interface DataConverter {
 
-    BaseEntity convertToEntity(PaymiddlewareDTO dtoClass);
+    CybersourceTransactionLogEntity convertToEntity(PaymiddlewareDTO sourceDTOClass, BaseEntity targetBaseEntity);
 
-    PaymiddlewareDTO convertToDTO(BaseEntity entityClass);
 }

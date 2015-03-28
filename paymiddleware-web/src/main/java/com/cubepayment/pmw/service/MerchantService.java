@@ -1,7 +1,7 @@
 package com.cubepayment.pmw.service;
 
 
-import com.cubepayment.pmw.data.entity.MerchantConfigurationEntity;
+import com.cubepayment.pmw.data.entity.CybersourceConfigurationEntity;
 import com.cubepayment.pmw.data.entity.MerchantEntity;
 
 public interface MerchantService {
@@ -11,7 +11,7 @@ public interface MerchantService {
      * @param merchantId
      * @return MerchantConfigurationEntity
      */
-    MerchantConfigurationEntity getMerchantConfigEntity(Long merchantId);
+    CybersourceConfigurationEntity getCybersourceMerchantConfigEntity(Long merchantId);
 
     /**
      *
