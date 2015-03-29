@@ -8,5 +8,7 @@ public interface TransactionService  {
 
     void saveTransactionLog(PaymentTransactionDto paymentTransactionDto);
 
+    void saveTransactionLog(CybersourceTransactionLogEntity cybersourceTransactionLogEntity);
+
     CybersourceTransactionLogEntity getTransactionLogByUUID(String transactionUUID);
 }

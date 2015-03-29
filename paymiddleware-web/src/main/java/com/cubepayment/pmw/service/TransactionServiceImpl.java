@@ -39,10 +39,19 @@ public class TransactionServiceImpl implements TransactionService {
         if(cybersourceTransactionLogEntity.getReasonCode()!=null && cybersourceTransactionLogEntity.getAuthResponse().equals("00")){
             cybersourceTransactionLogEntity.setTransactionStatus(TransactionStatus.ACCEPT);
         }
+        else{
+            cybersourceTransactionLogEntity.setTransactionStatus(TransactionStatus.ERROR);
+        }
 
         cybersourceTransactionLogEntity.setLastUpdateDate(new Date());
         cybersourceTransactionDao.save(cybersourceTransactionLogEntity);
 
+    }
+
+    @Override
+    public void saveTransactionLog(CybersourceTransactionLogEntity cybersourceTransactionLogEntity) {
+        cybersourceTransactionLogEntity.setLastUpdateDate(new Date());
+        cybersourceTransactionDao.save(cybersourceTransactionLogEntity);
     }
 
     @Override

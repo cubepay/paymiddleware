@@ -8,7 +8,8 @@
 <c:set var="context" value="${pageContext.request.contextPath}"/>
 
 <body onload="submit()">
-<form id="submitForm" action="https://secureacceptance.cybersource.com/pay" method="post">
+Processing ......
+<form id="submitForm" action="${endpoint_url}" method="post">
     <input type="hidden" name="access_key" value="${access_key}">
     <input type="hidden" name="profile_id" value="${profile_id}">
     <input type="hidden" name="transaction_uuid" value="${transaction_uuid}">
