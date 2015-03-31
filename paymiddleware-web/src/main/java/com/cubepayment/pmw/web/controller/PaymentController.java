@@ -130,8 +130,18 @@ public class PaymentController {
             sbResponseParameter.append(cybersourceTransactionLogEntity.getId());
             sbResponseParameter.append("&auth_ref_no=");
             sbResponseParameter.append(paymentTransactionDto.getAuthTransRefNo());
+
+            String paymentMethod=paymentTransactionDto.getReqPaymentMethod();
+            if(paymentMethod!=null && paymentMethod.equalsIgnoreCase("card"))
+            {
+               paymentMethod="Credit Card";
+            }
             sbResponseParameter.append("&payment_method=");
-            sbResponseParameter.append(paymentTransactionDto.getReqPaymentMethod());
+            sbResponseParameter.append(paymentMethod);
+            sbResponseParameter.append("&auth_amount=");
+            sbResponseParameter.append(paymentTransactionDto.getReqAmount());
+            sbResponseParameter.append("&card_no=");
+            sbResponseParameter.append(paymentTransactionDto.getReqCardNumber());
         }
         else{
             sbResponseParameter.append("&error_message=");
