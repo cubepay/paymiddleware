@@ -210,7 +210,7 @@
     </dependencies>
 
     <build>
-        <finalName>paymiddleware-web</finalName>
+        <finalName>paymiddleware</finalName>
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>

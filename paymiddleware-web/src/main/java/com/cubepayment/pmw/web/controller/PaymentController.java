@@ -33,7 +33,7 @@ import java.util.UUID;
 @RequestMapping("/")
 public class PaymentController {
 
-    private final Logger loggerFactory = LoggerFactory.getLogger(PaymentController.class);
+    private final Logger logger = LoggerFactory.getLogger(PaymentController.class);
 
     @Resource
     private MerchantService merchantService;
@@ -47,24 +47,27 @@ public class PaymentController {
     private static final String SIGNED_FIELD_NAMES = "access_key,profile_id,transaction_uuid,signed_field_names,unsigned_field_names,signed_date_time,locale,transaction_type,reference_number,amount,currency";
 
 
-    @RequestMapping(value = "doCheckout", method = {RequestMethod.GET,RequestMethod.POST})
+    @RequestMapping(value = "doCheckout", method = {RequestMethod.GET, RequestMethod.POST})
     public String doCheckout(
             @RequestParam Long merchant_id,
+            @RequestParam String transaction_type,
             @RequestParam String amount,
             @RequestParam String currency,
             @RequestParam String req_reference_number,
             @RequestParam String locale,
             HttpServletRequest request, Model model) {
 
+        logger.info("Incoming checkout request");
+        logIncomingRequest(request);
+
         CybersourceConfigurationEntity cybersourceConfigurationEntity = merchantService.getMerchantEntity(merchant_id).getCybersourceConfigurationEntity();
-        String transactionType="authorization";
 
         model.addAttribute("access_key", cybersourceConfigurationEntity.getAccessKey());
         model.addAttribute("profile_id", cybersourceConfigurationEntity.getProfileId());
         model.addAttribute("signed_field_names", SIGNED_FIELD_NAMES);
         model.addAttribute("unsigned_field_names", "");
         model.addAttribute("locale", locale);
-        model.addAttribute("transaction_type", transactionType);
+        model.addAttribute("transaction_type", transaction_type.trim());
         model.addAttribute("reference_number", req_reference_number);
         model.addAttribute("amount", amount);
         model.addAttribute("currency", currency);
@@ -74,12 +77,12 @@ public class PaymentController {
         model.addAttribute("transaction_uuid", transactionUUID);
         model.addAttribute("signed_date_time", signedDateTime);
 
-        PaymentTransactionDto paymentTransactionDto = buildCheckoutTransactionDTO(merchant_id, req_reference_number, transactionType, currency, amount, signedDateTime, locale);
+        PaymentTransactionDto paymentTransactionDto = buildCheckoutTransactionDTO(merchant_id, req_reference_number, transaction_type, currency, amount, signedDateTime, locale);
 
         paymentTransactionDto.setReqTransactionUUID(transactionUUID);
 
         Map<String, String> requestParameterMap = buildMapFromParameters(cybersourceConfigurationEntity, paymentTransactionDto);
-        requestParameterMap.put("signed_date_time",signedDateTime);
+        requestParameterMap.put("signed_date_time", signedDateTime);
 
         try {
             String signature = encryptionUtil.sign(requestParameterMap, cybersourceConfigurationEntity.getSecretKey());
@@ -93,7 +96,7 @@ public class PaymentController {
             e.printStackTrace();
         }
 
-        model.addAttribute("endpoint_url",cybersourceConfigurationEntity.getEndpointURL());
+        model.addAttribute("endpoint_url", cybersourceConfigurationEntity.getEndpointURL());
         //Save Request log
         paymentTransactionDto.setTransactionStatus(TransactionStatus.PENDING);
         transactionService.saveTransactionLog(paymentTransactionDto);
@@ -103,6 +106,8 @@ public class PaymentController {
 
     @RequestMapping(value = "response", method = RequestMethod.POST)
     public RedirectView saveTransactionResponse(HttpServletRequest request) {
+
+        logIncomingRequest(request);
 
         PaymentTransactionDto paymentTransactionDto = mapResponseToPaymentTransactionDTO(request);
 
@@ -114,9 +119,9 @@ public class PaymentController {
         paymentTransactionDto.setReqLocale(cybersourceTransactionLogEntity.getReqLocale());
         paymentTransactionDto.setReqProfileId(paymentTransactionDto.getReqProfileId());
 
-        boolean successTransaction=false;
-        if(paymentTransactionDto.getAuthResponse().equals("00")){
-            successTransaction=true;
+        boolean successTransaction = false;
+        if (paymentTransactionDto.getAuthResponse().equals("00")) {
+            successTransaction = true;
         }
         transactionService.saveTransactionLog(paymentTransactionDto);
 
@@ -125,16 +130,15 @@ public class PaymentController {
         sbResponseParameter.append(BooleanUtils.toStringTrueFalse(successTransaction));
         sbResponseParameter.append("&reference_no=");
         sbResponseParameter.append(paymentTransactionDto.getReqReferenceNumber());
-        if(successTransaction){
+        if (successTransaction) {
             sbResponseParameter.append("&transaction_id=");
             sbResponseParameter.append(cybersourceTransactionLogEntity.getId());
             sbResponseParameter.append("&auth_ref_no=");
             sbResponseParameter.append(paymentTransactionDto.getAuthTransRefNo());
 
-            String paymentMethod=paymentTransactionDto.getReqPaymentMethod();
-            if(paymentMethod!=null && paymentMethod.equalsIgnoreCase("card"))
-            {
-               paymentMethod="Credit Card";
+            String paymentMethod = paymentTransactionDto.getReqPaymentMethod();
+            if (paymentMethod != null && paymentMethod.equalsIgnoreCase("card")) {
+                paymentMethod = "Credit Card";
             }
             sbResponseParameter.append("&payment_method=");
             sbResponseParameter.append(paymentMethod);
@@ -142,13 +146,12 @@ public class PaymentController {
             sbResponseParameter.append(paymentTransactionDto.getReqAmount());
             sbResponseParameter.append("&card_no=");
             sbResponseParameter.append(paymentTransactionDto.getReqCardNumber());
-        }
-        else{
+        } else {
             sbResponseParameter.append("&error_message=");
             sbResponseParameter.append(paymentTransactionDto.getMessage());
         }
 
-        RedirectView redirectView = new RedirectView(merchantEntity.getMerchantResponseURL()+"?"+sbResponseParameter.toString());
+        RedirectView redirectView = new RedirectView(merchantEntity.getMerchantResponseURL() + "?" + sbResponseParameter.toString());
 
         return redirectView;
     }
@@ -156,18 +159,14 @@ public class PaymentController {
     @RequestMapping(value = "cancel_checkout", method = RequestMethod.POST)
     public RedirectView cancelCheckout(HttpServletRequest request) {
 
+        logIncomingRequest(request);
+
         String transactionUUID = request.getParameter("req_transaction_uuid");
         String decision = request.getParameter("decision");
         String message = request.getParameter("message");
 
         CybersourceTransactionLogEntity cybersourceTransactionLogEntity = transactionService.getTransactionLogByUUID(transactionUUID);
         MerchantEntity merchantEntity = merchantService.getMerchantEntity(cybersourceTransactionLogEntity.getMerchantId());
-
-        Enumeration enParams = request.getParameterNames();
-        while(enParams.hasMoreElements()){
-            String paramName = (String)enParams.nextElement();
-            System.out.println("Attribute Name - "+paramName+", Value - "+request.getParameter(paramName));
-        }
 
         //Save and update cancel
         cybersourceTransactionLogEntity.setTransactionStatus(TransactionStatus.CANCEL);
@@ -177,15 +176,16 @@ public class PaymentController {
 
         StringBuilder sbResponseParameter = new StringBuilder();
         sbResponseParameter.append("cancel=true");
-        RedirectView redirectView = new RedirectView(merchantEntity.getMerchantResponseURL()+"?"+sbResponseParameter.toString());
+        RedirectView redirectView = new RedirectView(merchantEntity.getMerchantResponseURL() + "?" + sbResponseParameter.toString());
 
         return redirectView;
     }
 
     @RequestMapping(value = "checkoutResponseDummy")
-    public String responseView(){
+    public String responseView() {
         return "checkoutResponseDummy";
     }
+
     private PaymentTransactionDto mapResponseToPaymentTransactionDTO(HttpServletRequest request) {
         PaymentTransactionDto paymentTransactionDto = new PaymentTransactionDto();
         paymentTransactionDto.setReqReferenceNumber(request.getParameter("req_reference_number"));
@@ -232,7 +232,7 @@ public class PaymentController {
         parameterMap.put("signed_field_names", SIGNED_FIELD_NAMES);
         parameterMap.put("unsigned_field_names", "");
         parameterMap.put("locale", paymentTransactionDto.getReqLocale());
-        parameterMap.put("transaction_type", "authorization");
+        parameterMap.put("transaction_type", paymentTransactionDto.getReqTransactionType());
         parameterMap.put("reference_number", paymentTransactionDto.getReqReferenceNumber());
         parameterMap.put("amount", paymentTransactionDto.getReqAmount().toString());
         parameterMap.put("currency", paymentTransactionDto.getReqCurrency());
@@ -250,6 +250,19 @@ public class PaymentController {
         payRequestDTO.setReqLocale(locale);
         payRequestDTO.setSignedDateTime(signedDateTime);
         return payRequestDTO;
+    }
+
+    private void logIncomingRequest(HttpServletRequest request) {
+        Enumeration enParams = request.getParameterNames();
+        StringBuilder sbLogParams = new StringBuilder();
+        while (enParams.hasMoreElements()) {
+            String paramName = (String) enParams.nextElement();
+            sbLogParams.append("Attribute Name - " + paramName + ", Value - " + request.getParameter(paramName));
+            sbLogParams.append("\n");
+        }
+
+        logger.info("Request Params\n");
+        logger.info(sbLogParams.toString());
     }
 
 }

@@ -21,8 +21,12 @@
         </layout>
     </appender>
 
+    <logger name="com.cubepayment">
+        <level value="DEBUG"/>
+    </logger>
+
     <root>
-        <priority value="INFO"/>
+        <level value="INFO"/>
         <appender-ref ref="FILE"/>
         <appender-ref ref="CONSOLE"/>
     </root>

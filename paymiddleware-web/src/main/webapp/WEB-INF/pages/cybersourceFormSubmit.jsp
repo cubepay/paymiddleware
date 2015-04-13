@@ -22,7 +22,6 @@ Processing ......
     <input type="hidden" name="amount" value="${amount}">
     <input type="hidden" name="currency" value="${currency}">
     <input type="hidden" name="signature" value="${signature}">
-
 </form>
 <script type="text/javascript">
     function submit()
